@@ -6,8 +6,12 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/BillboardComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "InputAction.h"
+#include "EnhancedInputComponent.h" 
+#include "Components/BillboardComponent.h"
+
 
 #include "Ship.generated.h"
 
@@ -32,10 +36,32 @@ class GAMEENGINEIII_API AShip : public APawn
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArm;
 
+	UPROPERTY(EditAnywhere)
+	UFloatingPawnMovement *Movement;
+    // this is not a component its an action
+	UPROPERTY(EditDefaultsOnly)
+	UInputAction *HonkAction;
+
+	UFUNCTION(BlueprintCallable)
+	void Shoot();
+
+	//Projectile
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	TSubclassOf<AActor> ProjectileClass;
+
+	
+	
+
+	
+
 
 public:	
 	// Sets default values for this actor's properties
 	AShip();
+
+	
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,5 +70,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void Honk(const FInputActionValue& InputActionValue);
 
 };

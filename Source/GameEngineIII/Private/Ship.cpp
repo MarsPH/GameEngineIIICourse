@@ -5,6 +5,8 @@
 
 #include "MovieSceneTracksComponentTypes.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 
 
 // Sets default values
@@ -33,6 +35,44 @@ AShip::AShip()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));//creats the sub object of floating pawn movement and assign it to Movemement pointer
+
+	ProjectileClass = nullptr;
+
+}
+
+void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) //automatically generated from IDE
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UEnhancedInputComponent *EIC = Cast <UEnhancedInputComponent>(PlayerInputComponent);
+	
+	EIC->BindAction(HonkAction, ETriggerEvent::Triggered, this, &AShip::Honk); // so everytime bind action is player. it plays honk function
+	
+	
+	
+}
+
+void AShip::Honk(const FInputActionValue& InputActionValue)
+{
+	UKismetSystemLibrary::PrintString(this, TEXT ("HONK!!!!"));
+}
+void AShip::Shoot()
+{
+	UKismetSystemLibrary::PrintString(this, TEXT("SHOOT"));
+
+	UWorld* World = GetWorld();
+
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = GetActorRotation();
+	SpawnRotation.Pitch = 0.0;
+	SpawnRotation.Roll = 0.0;
+
+	
+	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	World->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
 }
 
 // Called when the game starts or when spawned
